@@ -94,3 +94,96 @@ AI was helpful for generating the first draft of reducer, context, and form logi
 - matching the code to my existing folder structure
 - verifying the behavior against class requirements
 - testing the full cart flow in the browser
+
+# AI Usage Log — Cart API Workshop
+
+## Session: Cart API Workshop (March 21, 2026)
+
+### AGENTS.md Setup
+- What: Created and customized `AGENTS.md` in the project root to match my actual Buckeye Marketplace project structure.
+- What I changed from the provided template:
+  - Updated frontend and backend ports to match my local environment
+  - Documented my real folder structure (`src/components`, `src/context`, `src/reducers`, `src/types`, backend folders)
+  - Added current cart state conventions and action names
+  - Clarified that my cart UI is implemented as a sidebar and my backend uses EF Core + SQLite
+- Result: AI-generated code matched my project structure and import paths more closely.
+
+### Cart Entities + DbContext
+- Generated with help from: Claude, ChatGPT, GitHub Copilot
+- Files involved:
+  - `backend/Models/Cart.cs`
+  - `backend/Models/CartItem.cs`
+  - `backend/Data/MarketplaceContext.cs`
+- Review issues I fixed:
+  - Added `DbSet<Cart>` and `DbSet<CartItem>`
+  - Verified Cart -> CartItem -> Product relationships
+  - Confirmed the database model matched the workshop requirements
+
+### Cart DTOs
+- Generated with help from: Claude opus 4.6, ChatGPT 5.4
+- Files involved:
+  - `backend/DTOs/AddCartItemRequest.cs`
+  - `backend/DTOs/UpdateCartItemRequest.cs`
+  - `backend/DTOs/CartItemResponse.cs`
+  - `backend/DTOs/CartResponse.cs`
+- Review issues I fixed:
+  - Added response fields for computed totals
+  - Matched DTO structure to controller responses
+  - Included cart item ids for update/delete routes
+
+### FluentValidation
+- Generated with help from: Claude, ChatGPT, GitHub Copilot
+- Files involved:
+  - `backend/Validators/AddCartItemRequestValidator.cs`
+  - `backend/Validators/UpdateCartItemRequestValidator.cs`
+- Review issues I fixed:
+  - Installed FluentValidation packages
+  - Registered validators in the backend project
+  - Verified invalid requests return HTTP 400
+
+### CartController
+- Generated with help from: Claude, ChatGPT, GitHub Copilot
+- File involved:
+  - `backend/Controllers/CartController.cs`
+- Review issues I fixed:
+  - Adjusted the routes to match the workshop handout:
+    - `GET /api/cart`
+    - `POST /api/cart`
+    - `PUT /api/cart/{cartItemId}`
+    - `DELETE /api/cart/{cartItemId}`
+    - `DELETE /api/cart/clear`
+  - Switched from route-based `userId` to a hardcoded current user id
+  - Fixed update/delete logic to use `cartItemId` instead of `productId`
+  - Verified add-item upsert behavior and computed totals
+
+### Database + Migration Troubleshooting
+- Generated with help from: ChatGPT
+- Problems I ran into:
+  - `dotnet-ef` was not installed
+  - SQLite database already had existing tables
+  - Old backend processes were still using port 5228
+- Fixes I applied:
+  - Installed `dotnet-ef`
+  - Deleted the old SQLite database file and reran migrations
+  - Used `pkill dotnet` and restarted the backend cleanly
+
+### Swagger Testing
+- What I tested:
+  - `GET /api/cart`
+  - `POST /api/cart`
+  - `PUT /api/cart/{cartItemId}`
+  - `DELETE /api/cart/{cartItemId}`
+  - `DELETE /api/cart/clear`
+- Validation and edge cases tested:
+  - Invalid quantity returns 400
+  - Invalid product id returns 404
+  - Existing product add behavior increases quantity
+  - Totals and line totals are computed in backend responses
+
+## Key Concepts Verified
+- EF Core entity relationships
+- DTO-based API design
+- FluentValidation for request validation
+- Upsert logic in cart add flow
+- Computed response values (`LineTotal`, `Subtotal`, `TotalItems`, `Total`)
+- RESTful route design and Swagger testing
