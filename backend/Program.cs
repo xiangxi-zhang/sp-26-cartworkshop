@@ -1,5 +1,6 @@
 using backend.Data;
 using backend.Middleware;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // --- Services ---
 
 builder.Services.AddControllers();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -41,12 +43,12 @@ app.UseHttpsRedirection();
 app.UseCors("AllowReactApp");
 app.MapControllers();
 
-// --- Seed Data ---
+// --- Apply Migrations ---
 
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<MarketplaceContext>();
-    context.Database.EnsureCreated();
+    context.Database.Migrate();
 }
 
 app.Run();
