@@ -1,15 +1,11 @@
 import { useCart } from "../../context/CartContext";
+import CheckoutForm from "../CheckoutForm";
 import styles from "./CartSidebar.module.css";
 
 export function CartSidebar() {
-  const { state, dispatch } = useCart();
+  const { state, dispatch, cartTotal } = useCart();
 
   if (!state.isOpen) return null;
-
-  const total = state.items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
 
   return (
     <>
@@ -25,6 +21,7 @@ export function CartSidebar() {
             className={styles.closeButton}
             onClick={() => dispatch({ type: "TOGGLE_CART" })}
             aria-label="Close cart"
+            type="button"
           >
             ✕
           </button>
@@ -48,9 +45,8 @@ export function CartSidebar() {
 
                 <div className={styles.itemDetails}>
                   <p className={styles.itemName}>{item.productName}</p>
-                  <p className={styles.itemPrice}>
-                    ${item.price.toFixed(2)}
-                  </p>
+                  <p className={styles.itemPrice}>${item.price.toFixed(2)}</p>
+
                   <div className={styles.quantityControls}>
                     <button
                       className={styles.quantityButton}
@@ -64,10 +60,13 @@ export function CartSidebar() {
                         })
                       }
                       aria-label={`Decrease quantity of ${item.productName}`}
+                      type="button"
                     >
                       −
                     </button>
+
                     <span className={styles.quantity}>{item.quantity}</span>
+
                     <button
                       className={styles.quantityButton}
                       onClick={() =>
@@ -80,10 +79,12 @@ export function CartSidebar() {
                         })
                       }
                       aria-label={`Increase quantity of ${item.productName}`}
+                      type="button"
                     >
                       +
                     </button>
                   </div>
+
                   <button
                     className={styles.removeButton}
                     onClick={() =>
@@ -93,6 +94,7 @@ export function CartSidebar() {
                       })
                     }
                     aria-label={`Remove ${item.productName} from cart`}
+                    type="button"
                   >
                     Remove
                   </button>
@@ -106,12 +108,16 @@ export function CartSidebar() {
           <div className={styles.footer}>
             <div className={styles.total}>
               <span>Total</span>
-              <span>${total.toFixed(2)}</span>
+              <span>${cartTotal.toFixed(2)}</span>
             </div>
+
+            <CheckoutForm />
+
             <button
               className={styles.clearButton}
               onClick={() => dispatch({ type: "CLEAR_CART" })}
               aria-label="Clear cart"
+              type="button"
             >
               Clear Cart
             </button>
