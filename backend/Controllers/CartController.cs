@@ -2,17 +2,20 @@ using backend.Data;
 using backend.DTOs;
 using backend.Models;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace backend.Controllers;
 
 [ApiController]
 [Route("api/cart")]
+[Authorize]
 public class CartController : ControllerBase
 {
-    private const string CurrentUserId = "xiangxi";
+    private string CurrentUserId => User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? throw new UnauthorizedAccessException("User not authenticated");
 
     private readonly MarketplaceContext _context;
     private readonly IValidator<AddCartItemRequest> _addValidator;

@@ -179,3 +179,14 @@ git rebase origin/main
 # resolve any conflicts, then:
 git push --force-with-lease
 ```
+## Testing
+Backend tests:
+dotnet test backend.Tests/backend.Tests.csproj
+
+Frontend tests:
+cd frontend && npm run test
+
+## Local Auth Setup
+From the backend folder:
+dotnet user-secrets init
+dotnet user-secrets set "Jwt:Key" "development-secret-do-not-use-in-production-12345"
